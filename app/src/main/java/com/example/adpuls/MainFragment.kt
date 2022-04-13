@@ -1,33 +1,44 @@
 package com.example.adpuls
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.RecyclerView
 import com.example.adpuls.databinding.FragmentMainBinding
+import com.google.firebase.firestore.FirebaseFirestore
+
 
 class MainFragment : Fragment() {
 
-    private lateinit var recycler: RecyclerView
-    private val adapter = ValueAdapter()
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
+    private val db = FirebaseFirestore.getInstance()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentMainBinding.inflate(layoutInflater, container, false)
-        recycler = binding.recycler
-        recycler.adapter = adapter
-        adapter.setData(ValueList.valueList)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        db.collection("ad_puls_collection")
+            .get()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    for (document in task.result) {
+                        Log.d("tag", document.id + " => " + document.data)
+                        binding.textField.text = document.data.toString()
+                    }
+                } else {
+                    Log.e("tag", "Error getting data", task.exception)
+                }
+            }
+
         binding.fab.setOnClickListener {
             requireActivity().supportFragmentManager.beginTransaction()
                 .hide(this)

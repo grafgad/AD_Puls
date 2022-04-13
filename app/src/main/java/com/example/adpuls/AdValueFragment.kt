@@ -1,6 +1,7 @@
 package com.example.adpuls
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,10 +18,8 @@ class AdValueFragment : Fragment() {
     private var _binding: FragmentAdValueBinding? = null
     private val binding get() = _binding!!
 
-    private var pulse = ""
-    private var pressure = ""
-    private val repository = ValueList.valueList
-
+    private val db = FirebaseFirestore.getInstance()
+    private var adpuls = mutableMapOf("time" to "", "pressure" to "", "pulse" to "")
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,20 +31,21 @@ class AdValueFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        viewModel = ViewModelProvider(requireActivity())[AdViewModel::class.java]
-//          viewModel.bloodPressure.observe(viewLifecycleOwner, ::pressureValue)
-//        viewModel.pulse.observe(viewLifecycleOwner, ::pulseValue)
 
         binding.sendButton.setOnClickListener {
-//            viewModel.onSendButtonClicked()
-            repository.add(
-                Value(
-                    repository.size + 1,
-                    getCurrentDate(),
-                    pressureValue(),
-                    pulseValue()
-                )
-            )
+            getCurrentDate()
+            pulseValue()
+            pressureValue()
+
+            db.collection("ad_puls_collection")
+                .add(adpuls)
+                .addOnSuccessListener {
+                    Log.d("tag", "it happened!")
+                }
+                .addOnFailureListener {
+                        Log.d("tag", "doesn't work((")
+                }
+
             requireActivity().supportFragmentManager.beginTransaction()
                 .hide(this)
                 .add(R.id.container, MainFragment())
@@ -54,19 +54,17 @@ class AdValueFragment : Fragment() {
 
     }
 
-    private fun getCurrentDate(): String {
+    private fun getCurrentDate() {
         val sdf = SimpleDateFormat("dd.MM.yyyy HH:mm")
-        return sdf.format(Date())
+        adpuls["time"] = sdf.format(Date())
     }
 
-    private fun pulseValue(): String {
-        pulse = binding.pulseInput.text.toString()
-        return pulse
+    private fun pulseValue() {
+        adpuls["pulse"] = binding.pulseInput.text.toString()
     }
 
-    private fun pressureValue(): String {
-        pressure = binding.bloodPressureInput.text.toString()
-        return pressure
+    private fun pressureValue() {
+        adpuls["pressure"] = binding.bloodPressureInput.text.toString()
     }
 
 
