@@ -23,7 +23,7 @@ class AdViewModel : ViewModel() {
 
     fun onSendButtonClicked(pulse: MutableLiveData<String>, bloodPressure: MutableLiveData<String>){
 
-        repository.add(Value(repository.size+1, getCurrentDate(), bloodPressure.value.toString(), pulse.value.toString()))
+//        repository.add(Value(repository.size+1, getCurrentDate(), bloodPressure.value.toString(), pulse.value.toString()))
     }
 
 

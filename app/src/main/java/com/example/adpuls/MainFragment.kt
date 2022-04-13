@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.adpuls.databinding.FragmentMainBinding
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -15,13 +17,18 @@ class MainFragment : Fragment() {
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
     private val db = FirebaseFirestore.getInstance()
-    private var text = ""
+    private lateinit var recyclerView: RecyclerView
+    private val adapter = ValueAdapter()
+    private val valuesList = ValueList.valueList
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentMainBinding.inflate(layoutInflater, container, false)
+        recyclerView = binding.recycler
+        recyclerView.adapter = adapter
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
         return binding.root
     }
 
@@ -34,12 +41,20 @@ class MainFragment : Fragment() {
                 if (task.isSuccessful) {
                     for (document in task.result) {
                         Log.d("tag", document.id + " => " + document.data)
-                        text += document.data.toString()+ "\n"
-                        binding.textField.text = text
+                        valuesList.add(
+                            Value(
+                                document.id,
+                                document.data["time"].toString(),
+                                document.data["pressure"].toString(),
+                                document.data["pulse"].toString()
+                            )
+                        )
+                        adapter.notifyItemInserted(valuesList.lastIndex)
                     }
                 } else {
                     Log.e("tag", "Error getting data", task.exception)
                 }
+                adapter.setData(valuesList)
             }
 
         binding.fab.setOnClickListener {
