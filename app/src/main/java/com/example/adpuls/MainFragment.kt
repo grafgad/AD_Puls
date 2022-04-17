@@ -19,7 +19,7 @@ class MainFragment : Fragment() {
     private val db = FirebaseFirestore.getInstance()
     private lateinit var recyclerView: RecyclerView
     private val adapter = ValueAdapter()
-    private val valuesList = ValueList.valueList
+    private val valuesList = mutableListOf<Value>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
