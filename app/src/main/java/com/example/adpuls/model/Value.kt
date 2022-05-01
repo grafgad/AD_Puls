@@ -1,4 +1,4 @@
-package com.example.adpuls
+package com.example.adpuls.model
 
 data class Value(
     val id: String,

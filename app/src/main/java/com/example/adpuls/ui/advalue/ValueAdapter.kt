@@ -1,18 +1,20 @@
-package com.example.adpuls
+package com.example.adpuls.ui.advalue
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.adpuls.R
+import com.example.adpuls.model.Value
 
 class ValueAdapter : RecyclerView.Adapter<ValueAdapter.ValueViewHolder>() {
+
+    private var valueList = emptyList<Value>()
 
     fun setData(list: List<Value>){
         valueList = list
     }
-
-    private var valueList = emptyList<Value>()
 
     class ValueViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
         private val pressure = itemView.findViewById<TextView>(R.id.blood_pressure)
@@ -24,7 +26,6 @@ class ValueAdapter : RecyclerView.Adapter<ValueAdapter.ValueViewHolder>() {
             date.text = value.date
         }
     }
-
 
     override fun onCreateViewHolder(
         parent: ViewGroup,

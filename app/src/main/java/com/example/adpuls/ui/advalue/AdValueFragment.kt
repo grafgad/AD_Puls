@@ -1,17 +1,18 @@
-package com.example.adpuls
+package com.example.adpuls.ui.advalue
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
+import com.example.adpuls.MainFragment
+import com.example.adpuls.R
 import com.example.adpuls.databinding.FragmentAdValueBinding
-
 
 class AdValueFragment : Fragment() {
 
-    private lateinit var viewModel: AdViewModel
+    private val viewModel: AdViewModel by viewModels()
     private var _binding: FragmentAdValueBinding? = null
     private val binding get() = _binding!!
 
@@ -25,25 +26,18 @@ class AdValueFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(requireActivity())[AdViewModel::class.java]
-        viewModel.pulse.observe(viewLifecycleOwner, ::pulseValue)
-        viewModel.bloodPressure.observe(viewLifecycleOwner, ::pressureValue)
-
         binding.sendButton.setOnClickListener {
-            viewModel.onSendButtonClicked()
-            requireActivity().supportFragmentManager.beginTransaction()
-                .hide(this)
-                .add(R.id.container, MainFragment())
-                .commit()
+            val pulse = binding.pulseInput.text.toString()
+            val bloodPressure = binding.bloodPressureInput.text.toString()
+            viewModel.onSendButtonClicked(pulse, bloodPressure)
+            backToList()
         }
     }
 
-    private fun pulseValue(string: String) {
-        binding.pulseInput.setText(string)
-    }
-
-    private fun pressureValue(string: String) {
-        binding.bloodPressureInput.setText(string)
+    private fun backToList() {
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.container, MainFragment.newInstance())
+            .commit()
     }
 
     companion object {

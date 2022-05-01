@@ -9,8 +9,10 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.adpuls.databinding.FragmentMainBinding
+import com.example.adpuls.model.Value
+import com.example.adpuls.ui.advalue.AdValueFragment
+import com.example.adpuls.ui.advalue.ValueAdapter
 import com.google.firebase.firestore.FirebaseFirestore
-
 
 class MainFragment : Fragment() {
 
@@ -59,9 +61,8 @@ class MainFragment : Fragment() {
 
         binding.fab.setOnClickListener {
             requireActivity().supportFragmentManager.beginTransaction()
-                .hide(this)
+                .replace(R.id.container, AdValueFragment.newInstance())
                 .addToBackStack(null)
-                .add(R.id.container, AdValueFragment.newInstance())
                 .commit()
         }
     }

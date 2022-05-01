@@ -1,8 +1,6 @@
-package com.example.adpuls
+package com.example.adpuls.ui.advalue
 
-import android.annotation.SuppressLint
 import android.util.Log
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
@@ -10,15 +8,11 @@ import java.util.*
 
 class AdViewModel : ViewModel() {
 
-    val bloodPressure = MutableLiveData<String>()
-    val pulse = MutableLiveData<String>()
     private val db = FirebaseFirestore.getInstance()
     private var adpuls = mutableMapOf("time" to "", "pressure" to "", "pulse" to "")
 
-    fun onSendButtonClicked() {
-        getPulse()
-        getCurrentDate()
-        getPressure()
+    fun onSendButtonClicked(pulse: String, bloodPressure: String) {
+        fillAdPulse(pulse, bloodPressure)
 
         db.collection("ad_puls_collection")
             .add(adpuls)
@@ -31,20 +25,11 @@ class AdViewModel : ViewModel() {
             }
     }
 
-    private fun getPressure() {
-        adpuls["pressure"] = bloodPressure.toString()
-    }
-
-    @SuppressLint("SimpleDateFormat")
-    private fun getCurrentDate() {
-        val sdf = SimpleDateFormat("dd.MM.yyyy HH:mm")
+    private fun fillAdPulse(pulse: String, bloodPressure: String) {
+        adpuls["pulse"] = pulse
+        adpuls["pressure"] = bloodPressure
+        val sdf = SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault())
         adpuls["time"] = sdf.format(Date())
     }
-
-    private fun getPulse() {
-        adpuls["pulse"] = pulse.toString()
-    }
-
-
 }
 
